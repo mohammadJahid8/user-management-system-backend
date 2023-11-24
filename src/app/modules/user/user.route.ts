@@ -16,4 +16,11 @@ router.get('/', auth(), UserController.getAllUsers);
 
 router.get('/profile', auth(), UserController.getMyProfile);
 
+router.patch(
+  '/updateProfile',
+  auth(),
+  // validateRequest(AuthValidation.updateProfileZodSchema),
+  UserController.updateProfile
+);
+
 export const UserRoutes = router;

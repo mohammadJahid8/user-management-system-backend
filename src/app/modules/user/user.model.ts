@@ -8,11 +8,11 @@ const userSchema = new Schema<IUser, UserModel>(
     name: {
       type: String,
       required: true,
-      unique: true,
     },
     email: {
       type: String,
       required: true,
+      unique: true,
     },
     password: {
       type: String,
@@ -29,10 +29,10 @@ const userSchema = new Schema<IUser, UserModel>(
 );
 
 userSchema.statics.isUserExist = async function (
-  id: string
+  email: string
 ): Promise<Pick<IUser, 'name' | 'password' | 'email'> | null> {
   const user = await User.findOne(
-    { id },
+    { email },
     { email: 1, password: 1, name: 1 }
   ).lean();
 

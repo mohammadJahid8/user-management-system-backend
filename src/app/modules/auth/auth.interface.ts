@@ -3,6 +3,10 @@ export type ILoginUser = {
   password: string;
 };
 
+export type ILoginUserResponse = {
+  accessToken: string;
+};
+
 export type IUpdateProfile = {
   name?: string;
   oldPassword: string;

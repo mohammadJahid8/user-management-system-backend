@@ -11,7 +11,9 @@ process.on('uncaughtException', error => {
 let server: Server;
 async function main() {
   try {
-    await mongoose.connect(config.database_url as string);
+    await mongoose.connect(config.database_url as string, {
+      autoIndex: true,
+    });
     console.log('Connected to MongoDB');
 
     server = app.listen(config.port, () => {
