@@ -1,4 +1,5 @@
 import express from 'express';
+import auth from '../../middlewares/auth';
 import { validateRequest } from '../../middlewares/validateRequest';
 import { AuthController } from './auth.controller';
 import { AuthValidation } from './auth.validation';
@@ -14,9 +15,9 @@ router.post(
 
 router.post(
   '/change-password',
-
-  validateRequest(AuthValidation.changePasswordZodSchema),
-  AuthController.changePassword
+  auth(),
+  // validateRequest(AuthValidation.updateProfileZodSchema),
+  AuthController.updateProfile
 );
 
 export const AuthRoutes = router;

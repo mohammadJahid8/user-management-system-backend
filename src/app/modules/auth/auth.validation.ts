@@ -11,19 +11,19 @@ const loginZodSchema = z.object({
   }),
 });
 
-const changePasswordZodSchema = z.object({
-  body: z.object({
-    oldPassword: z.string({
-      required_error: 'Old password is required',
-    }),
-    newPassword: z.string({
-      required_error: 'New password is required',
-    }),
-  }),
-});
+// const updateProfileZodSchema = z.object({
+//   body: z.object({
+//     oldPassword: z.string({
+//       required_error: 'Old password is required',
+//     }),
+//     newPassword: z.string({
+//       required_error: 'New password is required',
+//     }),
+//   }),
+// });
 
 export const AuthValidation = {
   loginZodSchema,
 
-  changePasswordZodSchema,
+  // updateProfileZodSchema,
 };

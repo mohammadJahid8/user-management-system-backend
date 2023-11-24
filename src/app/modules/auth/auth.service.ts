@@ -4,7 +4,7 @@ import ApiError from '../../../Erros/ApiError';
 import config from '../../../config';
 import { jwtHelpers } from '../../../helpers/jwtHelpers';
 import { User } from '../user/user.model';
-import { IChangePassword, ILoginUser } from './auth.interface';
+import { ILoginUser, IUpdateProfile } from './auth.interface';
 
 const loginUser = async (payload: ILoginUser): Promise<string> => {
   const { email, password } = payload;
@@ -33,31 +33,53 @@ const loginUser = async (payload: ILoginUser): Promise<string> => {
   return accessToken;
 };
 
-const changePassword = async (
+const updateProfile = async (
   user: JwtPayload | null,
-  payload: IChangePassword
+  payload: IUpdateProfile
 ): Promise<void> => {
-  const { oldPassword } = payload;
+  const { oldPassword, newPassword, name } = payload;
 
-  // const isUserExist = await User.isUserExist(user?.id);
-  const isUserExist = await User.findOne({ id: user?.id }).select('+password');
+  const isUserExist = await User.findOne({ id: user?.userId }).select(
+    '+password'
+  );
 
   if (!isUserExist) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User does not exist');
   }
 
-  const isPasswordMatch =
-    isUserExist.password &&
-    (await User.isPasswordMatch(oldPassword, isUserExist?.password));
-
-  if (!isPasswordMatch) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Old password is incorrect');
+  if (name) {
+    // If updating only the name
+    isUserExist.name = name as string;
   }
 
-  await isUserExist.save();
+  if (oldPassword && newPassword) {
+    // If updating both name and password
+    if (
+      isUserExist.password &&
+      !(await User.isPasswordMatch(oldPassword, isUserExist.password))
+    ) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, 'Old Password is incorrect');
+    }
+
+    isUserExist.name = name as string;
+    isUserExist.password = newPassword;
+  } else if (newPassword) {
+    // If updating only the password
+    if (
+      isUserExist.password &&
+      !(await User.isPasswordMatch(oldPassword, isUserExist.password))
+    ) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, 'Old Password is incorrect');
+    }
+
+    isUserExist.password = newPassword;
+  }
+
+  // updating using save()
+  isUserExist.save();
 };
 
 export const AuthService = {
   loginUser,
-  changePassword,
+  updateProfile,
 };
