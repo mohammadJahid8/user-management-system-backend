@@ -4,13 +4,9 @@ import ApiError from '../../../Erros/ApiError';
 import config from '../../../config';
 import { jwtHelpers } from '../../../helpers/jwtHelpers';
 import { User } from '../user/user.model';
-import {
-  IChangePassword,
-  ILoginUser,
-  ILoginUserResponse,
-} from './auth.interface';
+import { IChangePassword, ILoginUser } from './auth.interface';
 
-const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
+const loginUser = async (payload: ILoginUser): Promise<string> => {
   const { email, password } = payload;
 
   const isUserExist = await User.isUserExist(email);
@@ -33,16 +29,8 @@ const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
     config.jwt.secret as Secret,
     config?.jwt?.expires_in as string
   );
-  const refreshToken = jwtHelpers.createToken(
-    payLoad,
-    config.jwt.refresh_secret as Secret,
-    config?.jwt?.refresh_expires_in as string
-  );
 
-  return {
-    accessToken,
-    refreshToken,
-  };
+  return accessToken;
 };
 
 const changePassword = async (
